@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class AttackState : IState
 {
-    private PlayerController player;
-        
+    private readonly PlayerController player;
+    private static readonly int IsAttacking = Animator.StringToHash("isAttacking");
+
     public AttackState(PlayerController player)
     {
         this.player = player;
@@ -13,13 +14,13 @@ public class AttackState : IState
 
     public void Enter()
     {
-        player.animator.SetBool("isAttacking",true);
+        player.animator.SetBool(IsAttacking,true);
         player.OnAttackEndEvent += OnAttackEnd;
     }
 
     private void OnAttackEnd(bool end)
     {
-        player.animator.SetBool("isAttacking",false);
+        player.animator.SetBool(IsAttacking,false);
         player.ChangeState(new IdleState(player));
     }
         

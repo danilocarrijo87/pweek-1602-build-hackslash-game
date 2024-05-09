@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class WalkState : IState
 {
-    private PlayerController player;
-    private Transform _enemy;
-        
+    private readonly PlayerController player;
+    private Transform enemy;
+    private static readonly int Velocity = Animator.StringToHash("velocity");
+
     public WalkState(PlayerController player, Transform enemy = null)
     {
         this.player = player;
-        _enemy = enemy;
+        this.enemy = enemy;
     }
 
     private void OnMouseClick(RaycastHit hit)
     {
         player.agent.destination = hit.point;
-        _enemy = hit.transform.tag.Equals("Enemy") ? hit.transform : null;
-        Debug.Log(hit.transform.tag);
+        enemy = hit.transform.tag.Equals("Enemy") ? hit.transform : null;
         player.ChangeState(new WalkState(player));
     }
 
@@ -32,16 +32,14 @@ public class WalkState : IState
     {
         if (!player.agent.pathPending)
         {
-            player.animator.SetFloat("velocity",Mathf.Clamp(player.agent.velocity.sqrMagnitude, 0, 1));
-            if (_enemy != null)
+            player.animator.SetFloat(Velocity,Mathf.Clamp(player.agent.velocity.sqrMagnitude, 0, 1));
+            if (enemy != null)
             {
                 if (player.agent.remainingDistance <= player.agent.stoppingDistance + 2f)
                 {
                     player.agent.isStopped = true;
                     player.agent.ResetPath();
-                    Vector3 rotation = Quaternion.LookRotation(_enemy.transform.position).eulerAngles;
-                    rotation.y = 0f;
-                    player.transform.rotation = Quaternion.Euler(rotation);
+                    player.transform.LookAt (new Vector3 (enemy.transform.position.x, player.transform.position.y, enemy.transform.position.z));
                     player.ChangeState(new AttackState(player));
                 }
             }

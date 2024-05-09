@@ -9,4 +9,5 @@ public class Weapon : ScriptableObject
     public int rate;
     public string weaponName;
     public int durability;
+    public Transform hitEffect;
 }

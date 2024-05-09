@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class IdleState : IState
 {
-    private PlayerController player;
-        
+    private readonly PlayerController player;
+    private static readonly int Velocity = Animator.StringToHash("velocity");
+
     public IdleState(PlayerController player)
     {
         this.player = player;
@@ -16,7 +17,6 @@ public class IdleState : IState
     {
         player.agent.destination = hit.point;
         var enemy = hit.transform.tag.Equals("Enemy") ? hit.transform : null;
-        Debug.Log(hit.transform.tag);
         player.ChangeState(new WalkState(player, enemy));
     }
 
@@ -24,7 +24,7 @@ public class IdleState : IState
     {
         player.agent.isStopped = false;
         player.OnMouseClick += OnMouseClick;
-        player.animator.SetFloat("velocity",0);
+        player.animator.SetFloat(Velocity,0);
     }
         
     public void Update()

@@ -10,6 +10,8 @@ public class Sword : MonoBehaviour
 
     [HideInInspector]
     public Transform enemy;
+
+    private Transform hitEffect;
     
     // Start is called before the first frame update
     void Start()
@@ -36,8 +38,16 @@ public class Sword : MonoBehaviour
     {
         if (enemy == null && canHit && other.transform.tag.Equals("Enemy"))
         {
+            var enemyController = other.GetComponent<EnemyController>();
+            hitEffect = Instantiate(weaponInfo.hitEffect, other.transform.position + enemyController.hitOffset, Quaternion.identity);
             enemy = other.transform;
             enemy.SendMessage("TakeDamage", weaponInfo.damage);
         }
+    }
+
+    IEnumerator DestroyHitEffect()
+    {
+        yield return new WaitForSeconds(1);
+        Destroy(hitEffect);
     }
 }

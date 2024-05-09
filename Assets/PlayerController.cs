@@ -13,12 +13,18 @@ public class PlayerController : MonoBehaviour
     private Camera cam = null;
     private StateMachine stateMachine;
     public event Action<RaycastHit> OnMouseClick;
+    public float maxHealth;
     public event Action<bool> OnAttackEndEvent;
     public BoolEventChannel boolEventChannel;
+    public FloatEventChannel playerHealthChannel;
+
+    private float currHealth;
         
     // Start is called before the first frame update
     void Start()
     {
+        currHealth = maxHealth;
+        playerHealthChannel.Invoke(currHealth);
         cam = Camera.main;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
@@ -58,15 +64,19 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    public void TakeDamage(float amount)
+    {
+        currHealth -= amount;
+        playerHealthChannel.Invoke(currHealth);
+    }
+
     public void SwordSlash()
     {
-        Debug.Log("SwordSlash");
         boolEventChannel.Invoke(true);
     }
 
     public void AttackEnd()
     {
-        Debug.Log("AttackEnd");
         OnAttackEndEvent?.Invoke(true);
         boolEventChannel.Invoke(false);
     }

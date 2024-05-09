@@ -7,30 +7,29 @@ using UnityEngine;
 public class StateMachine
 {
     
-    public IState CurrentState { get; private set; }
-    public event Action<IState> stateChanged;
+    public IState currentState { get; private set; }
+    public event Action<IState> StateChanged;
     
     public void Initialize(IState state)
     {
-        CurrentState = state;
+        currentState = state;
         state.Enter();
         
-        stateChanged?.Invoke(state);
+        StateChanged?.Invoke(state);
     }
     
     public void TransitionTo(IState nextState)
     {
-        CurrentState.Exit();
-        CurrentState = nextState;
+        currentState.Exit();
+        currentState = nextState;
         nextState.Enter();
-        Debug.Log(nextState.GetType());
 	
         
-        stateChanged?.Invoke(nextState);
+        StateChanged?.Invoke(nextState);
     }
     
     public void Update()
     {
-        CurrentState?.Update();
+        currentState?.Update();
     }
 }
